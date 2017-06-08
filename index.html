@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>How Long since Marroc Lost A Scorpion</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <style>
+    h1 {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        position: fixed;
+        align-items: center;
+        justify-content: center;
+    }
+    </style>
+</head>
+<body>
+<h1>It has been&nbsp;<span id="howlong">test</span>&nbsp;since Marroc lost a Scorpion</h1>
+<script>
+function Get(yourUrl){
+    var Httpreq = new XMLHttpRequest(); // a new request
+    Httpreq.open("GET",yourUrl,false);
+    Httpreq.send(null);
+    return Httpreq.responseText;          
+}
+
+function upTime(countTo) {
+  var difference = moment.utc().from(countTo, true);
+  span = document.getElementById("howlong");
+  txt = document.createTextNode(difference);
+  span.innerText = txt.textContent;
+  clearTimeout(upTime.to);
+  upTime.to=setTimeout(function(){ upTime(countTo); },1000);
+}
+
+window.onload=function() {
+    var kill = JSON.parse(Get("https://zkillboard.com/api/characterID/96875547/losses/shipTypeID/640/limit/1/"));
+    killtime = kill[0].killTime
+    since = moment.utc(kill[0].killTime, "YYYY-MM-DD hh:mm:ss")
+    upTime(since)
+}
+</script>
+</body>
+</html>
