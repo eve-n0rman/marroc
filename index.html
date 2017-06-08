@@ -15,7 +15,7 @@
     </style>
 </head>
 <body>
-<h1>It has been&nbsp;<span id="howlong"></span>&nbsp;since Marroc lost a Scorpion</h1>
+<h1>It has been&nbsp;<a href=# id="lastkill" target=#><span id="howlong"></span></a>&nbsp;since Marroc lost a Scorpion</h1>
 <script>
 function Get(yourUrl){
     var Httpreq = new XMLHttpRequest(); // a new request
@@ -35,8 +35,12 @@ function upTime(countTo) {
 
 window.onload=function() {
     var kill = JSON.parse(Get("https://zkillboard.com/api/characterID/96875547/losses/shipTypeID/640/limit/1/"));
-    killtime = kill[0].killTime
-    since = moment.utc(kill[0].killTime, "YYYY-MM-DD hh:mm:ss")
+    var killtime = kill[0].killTime;
+    var killid = kill[0].killID;
+    var url = "https://zkillboard.com/kill/" + killid + "/";
+    var link = document.getElementById("lastkill");
+    link.setAttribute("href", url)
+    var since = moment.utc(kill[0].killTime, "YYYY-MM-DD hh:mm:ss")
     upTime(since)
 }
 </script>
