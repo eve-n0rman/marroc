@@ -29,7 +29,7 @@ function upTime(countTo) {
 function refreshKill() {
     var req = new XMLHttpRequest(); // a new request
     var kill;
-    req.open("GET","https://zkillboard.com/api/characterID/96875547/losses/shipTypeID/640/limit/1/",true);
+    req.open("GET","https://zkillboard.com/api/characterID/96875547/losses/shipTypeID/634/limit/1/",true);
     req.onreadystatechange = function() {
       if (req.readyState == 4) {
         kill = JSON.parse(req.responseText)
