@@ -33,12 +33,12 @@ function refreshKill() {
     req.onreadystatechange = function() {
       if (req.readyState == 4) {
         kill = JSON.parse(req.responseText)
-        var killtime = kill[0].killTime;
-        var killid = kill[0].killID;
+        var killtime = kill[0].killmail_time;
+        var killid = kill[0].killmail_id;
         var url = "https://zkillboard.com/kill/" + killid + "/";
         var link = document.getElementById("lastkill");
         link.setAttribute("href", url);
-        var since = moment.utc(kill[0].killTime, "YYYY-MM-DD hh:mm:ss");
+        var since = moment.utc(killtime, "YYYY-MM-DD hh:mm:ss");
         upTime(since);
         refreshKill.to=setTimeout(function() { refreshKill(); }, 60000);
       }
