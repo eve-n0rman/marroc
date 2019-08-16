@@ -2,7 +2,8 @@
 <html>
 <head>
     <title>How Long since Marroc Lost A Exequror</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <meta charset="UTF-8">
     <style>
     h1 {
         height: 100%;
@@ -17,36 +18,39 @@
 <body>
 <h1>It has been&nbsp;<a href=# id="lastkill" target=#><span id="howlong"></span></a>&nbsp;since Marroc lost an Exequror</h1>
 <script>
-function upTime(countTo) {
-  var difference = moment.utc().from(countTo, true);
-  span = document.getElementById("howlong");
-  txt = document.createTextNode(difference);
-  span.innerText = txt.textContent;
-  clearTimeout(upTime.to);
-  upTime.to=setTimeout(function(){ upTime(countTo); },1000);
+"use strict";
+
+let lastKillTime = null;
+
+function updateTime() {
+  let difference = moment.utc().from(lastKillTime, true);
+  document.getElementById("howlong").textContent = difference;
 }
 
-function refreshKill() {
-    var req = new XMLHttpRequest(); // a new request
-    var kill;
-    req.open("GET","https://zkillboard.com/api/characterID/96875547/losses/shipTypeID/634/",true);
-    req.onreadystatechange = function() {
-      if (req.readyState == 4) {
-        kill = JSON.parse(req.responseText)
-        var killtime = kill[0].killmail_time;
-        var killid = kill[0].killmail_id;
-        var url = "https://zkillboard.com/kill/" + killid + "/";
-        var link = document.getElementById("lastkill");
-        link.setAttribute("href", url);
-        var since = moment.utc(killtime, "YYYY-MM-DD hh:mm:ss");
-        upTime(since);
-        refreshKill.to=setTimeout(function() { refreshKill(); }, 60000);
-      }
-    }
-    req.send();
+async function fetchJSON(url) {
+    let response = await fetch(url);
+    return response.json();
 }
 
-window.onload=refreshKill()
+async function refreshKill() {
+    let kills = await fetchJSON("https://zkillboard.com/api/characterID/96875547/losses/shipTypeID/634/");
+    let killid = kills[0].killmail_id;
+    let killhash = kills[0].zkb.hash;
+
+    let esi_killmail = await fetchJSON(`https://esi.evetech.net/latest/killmails/${killid}/${killhash}`)
+    lastKillTime = moment.utc(esi_killmail.killmail_time);
+
+    var link = document.getElementById("lastkill");
+    link.href = `https://zkillboard.com/kill/${killid}/`;
+    updateTime();
+}
+
+window.onload = function() {
+    refreshKill();
+    setInterval(refreshKill, 60000);
+    setInterval(updateTime, 1000);
+};
+
 </script>
 </body>
 <script>
